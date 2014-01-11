@@ -9,7 +9,7 @@
  * @license    http://kohanaphp.com/license
  */
 
-namespace Fuel\Core;
+//namespace Fuel\Core;
 
 
 
@@ -35,11 +35,6 @@ class Database_MySQL_Connection extends \Database_Connection
 	 * @var  string  MySQL uses a backtick for identifiers
 	 */
 	protected $_identifier = '`';
-
-	/**
-	 * @var  bool  Allows transactions
-	 */
-	protected $_in_transaction = false;
 
 	/**
 	 * @var  string  Which kind of DB is used
@@ -464,32 +459,24 @@ class Database_MySQL_Connection extends \Database_Connection
 		return array($errno, empty($errno)? null : $errno, empty($errno) ? null : mysql_error($this->_connection));
 	}
 
-	public function in_transaction()
-	{
-		return $this->_in_transaction;
-	}
-
-	public function start_transaction()
+	protected function driver_start_transaction()
 	{
 		$this->query(0, 'SET AUTOCOMMIT=0', false);
 		$this->query(0, 'START TRANSACTION', false);
-		$this->_in_transaction = true;
 		return true;
 	}
 
-	public function commit_transaction()
+	protected function driver_commit()
 	{
 		$this->query(0, 'COMMIT', false);
 		$this->query(0, 'SET AUTOCOMMIT=1', false);
-		$this->_in_transaction = false;
 		return true;
 	}
 
-	public function rollback_transaction()
+	protected function driver_rollback()
 	{
 		$this->query(0, 'ROLLBACK', false);
 		$this->query(0, 'SET AUTOCOMMIT=1', false);
-		$this->_in_transaction = false;
 		return true;
 	}
 
